@@ -1,8 +1,7 @@
-use clap::Parser;
 use lib_katas::test;
 mod cli;
 pub fn main() {
-    let args = cli::Args::parse();
+    let args = cli::parse_cli_args();
     test();
     println!("Hello, world!");
 }

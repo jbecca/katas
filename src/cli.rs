@@ -8,3 +8,7 @@ pub struct Args {
     #[arg(short, long)]
     list: bool,
 }
+
+pub fn parse_cli_args() -> Args {
+    Args::parse()
+}
