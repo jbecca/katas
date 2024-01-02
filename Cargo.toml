@@ -17,3 +17,6 @@ path = "src/lib.rs"
 [[bin]]
 name = "katas"
 path = "src/main.rs"
+
+[profile.dev.package.sqlx-macros]
+opt-level = 3
