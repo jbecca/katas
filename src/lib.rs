@@ -7,7 +7,7 @@ pub fn test() {
     db::test();
 }
 
-fn linear_search(a: &[u32], num: u32) -> bool {
+fn linear_search(a: &[u64], num: u64) -> bool {
     for element in 0..a.len() {
         if a[element] == num {return true};
     }
@@ -36,21 +36,38 @@ fn binary_search(a: &[u64], num: u64) -> bool {
 
 #[test]
 fn test_lin_search() {
-    assert_eq!(linear_search(&[1,2,3,4,5], 4), true);
-    assert_eq!(linear_search(&[1,2,3,4,5], 6), false);
-    assert_eq!(linear_search(&[1,2,3,4,5], 0), false);
+    let mut rng = rand::thread_rng();
+    let len = 100;
+    let mut vals: Vec<u64> = (0..len).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
+    vals.sort();
+    println!("testing for len {}", len);
+    assert_eq!(linear_search(&vals[0..], 387902), vals.contains(&387902));
+    let len = 10000;
+    let mut vals: Vec<u64> = (0..len).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
+    vals.sort();
+    println!("testing for len {}", len);
+    assert_eq!(linear_search(&vals[0..], 387902), vals.contains(&387902));
+    let len = 1000000;
+    let mut vals: Vec<u64> = (0..len).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
+    vals.sort();
+    println!("testing for len {}", len);
+    assert_eq!(linear_search(&vals[0..], 387902), vals.contains(&387902));
+
 }
 
 
 #[test]
 fn test_bin_search() {
     let mut rng = rand::thread_rng();
-
-    let mut vals: Vec<u64> = (0..100000).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
+    let len = 100;
+    let mut vals: Vec<u64> = (0..len).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
     vals.sort();
-    assert_eq!(binary_search(&[1,2,3,4,5], 4), true);
-    assert_eq!(binary_search(&[1,2,3,4,5], 6), false);
-    assert_eq!(binary_search(&[1,2,3,4,5], 0), false);
-    println!("Now the long test");
+    println!("testing for len {}", len);
+    assert_eq!(binary_search(&vals[0..], 387902), vals.contains(&387902));
+
+    let len = 10000;
+    let mut vals: Vec<u64> = (0..len).map(|_| rng.gen_range(0..2000000000)).collect::<Vec<u64>>();
+    vals.sort();
+    println!("testing for len {}", len);
     assert_eq!(binary_search(&vals[0..], 387902), vals.contains(&387902));
 }
