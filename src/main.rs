@@ -13,6 +13,7 @@ mod util;
 enum SubCommands {
     List(commands::list::ListArgs),
     Log(commands::log::LogArgs),
+    Init(commands::init::InitArgs),
 }
 
 #[derive(Parser, Debug)]
@@ -25,20 +26,11 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + 'static>> {
     let args = Args::parse();
-    test();
-
-    let mut conn = SqliteConnectOptions::from_str("sqlite://data.db")?
-        .create_if_missing(true)
-        .journal_mode(SqliteJournalMode::Wal)
-        .read_only(false)
-        .connect()
-        .await?;
-    println!("Hello, world!");
-    db::setup_tables(&mut conn).await;
 
     match args.command {
         SubCommands::List(options) => commands::list::run(options)?,
         SubCommands::Log(options) => commands::log::run(options)?,
+        SubCommands::Init(options) => commands::init::run(options).await?,
     };
 
     Ok(())

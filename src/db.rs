@@ -1,28 +1,4 @@
-use sqlx::{Connection, SqliteConnection};
-
-pub fn test() {
-    println!("Hello from test function");
-}
-
-pub fn insert() {
-    // insert a new kata into the local database
-    ()
-}
-
-pub fn update() {
-    // update entry in db;
-    ()
-}
-
-pub fn delete() {
-    // remove entry from database
-    ()
-}
-
-pub fn read() {
-    // read entry from database
-    ()
-}
+use sqlx::SqliteConnection;
 
 pub async fn setup_tables(conn: &mut SqliteConnection) {
     let result = sqlx::query(

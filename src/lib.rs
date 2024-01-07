@@ -1,8 +1,8 @@
 mod db;
+use rand::Rng;
 
 pub fn test() {
     println!("Test");
-    db::test();
 }
 
 fn linear_search(a: &[u64], num: u64) -> bool {
