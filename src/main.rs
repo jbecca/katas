@@ -1,13 +1,9 @@
 use clap::{Parser, Subcommand};
-use lib_katas::test;
-mod db;
-use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
-use sqlx::ConnectOptions;
 use std::error::Error;
-use std::str::FromStr;
 
 mod commands;
 mod util;
+mod db;
 
 #[derive(Subcommand, Debug)]
 enum SubCommands {
