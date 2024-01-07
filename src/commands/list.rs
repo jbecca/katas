@@ -5,7 +5,7 @@ use std::error::Error;
 pub struct ListArgs {
     /// number of entries to find
     #[arg(long, short, default_value_t = 10)]
-    number: u32
+    number: u32,
 }
 pub(crate) fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
     unimplemented!()

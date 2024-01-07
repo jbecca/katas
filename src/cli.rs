@@ -1,6 +1,11 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
+mod commands;
 /// CLI for kata trainer
+#[derive(Parser, Subcommand)]
+enum SubCommand {
+    List(),
+}
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {

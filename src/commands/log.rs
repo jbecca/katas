@@ -1,7 +1,7 @@
 use std::error::Error;
 
-use clap::{Parser};
 use crate::util::Status;
+use clap::Parser;
 
 #[derive(Parser, Debug)]
 pub(crate) struct LogArgs {
