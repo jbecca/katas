@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
 use lib_katas::test;
-mod cli;
 mod db;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
 use sqlx::ConnectOptions;
