@@ -7,13 +7,17 @@ mod db;
 
 #[derive(Subcommand, Debug)]
 enum SubCommands {
+    /// List katas
     List(commands::list::ListArgs),
+    /// Log a kata practice attempt
     Log(commands::log::LogArgs),
+    /// Initialize the sqliteDB
     Init(commands::init::InitArgs),
 }
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None, styles=util::get_style())]
+/// Code kata manager
 struct Args {
     #[command(subcommand)]
     command: SubCommands,

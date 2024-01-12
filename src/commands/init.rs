@@ -9,7 +9,7 @@ use clap::Parser;
 
 #[derive(Parser, Debug)]
 pub(crate) struct InitArgs {
-    /// name of kata to update
+    /// This subcommand is not currently used
     #[arg(short, long)]
     name: String,
 }
