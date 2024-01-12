@@ -13,7 +13,7 @@ enum SubCommands {
 }
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, styles=util::get_style())]
 struct Args {
     #[command(subcommand)]
     command: SubCommands,
