@@ -4,8 +4,10 @@ Collection of katas and some tools for managing them. While there will be a fair
 Extremely lofty goals include having a tool that generates input in which the katas can be tested against and proven as passed or failed, with some form of spaced repetition included. 
 
 ## Current TODOs
-- [ ] Add command for creating database if not present
-- [ ] Set up default location for database (use configuration file for this)
+- [x] Add command for creating database if not present
+- [x] Set up default location for database (use configuration file for this)
+- [ ] Add in database helper functions for logging new katas
+- [ ] Add in database helper functions for getting stats on katas
 - [ ] Add trivial spaced repetition algorithm
 - [ ] Create interface with CLI for grabbing katas to retest
 - [ ] Figure out way to have user defined katas instead of all hardcoded
