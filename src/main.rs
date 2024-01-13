@@ -12,7 +12,8 @@ enum SubCommands {
     /// Log a kata practice attempt
     Log(commands::log::LogArgs),
     /// Initialize the sqliteDB
-    Init(commands::init::InitArgs),
+    Init,
+    //Add(commands::add::AddArgs),
 }
 
 #[derive(Parser, Debug)]
@@ -30,7 +31,7 @@ async fn main() -> Result<(), Box<dyn Error + 'static>> {
     match args.command {
         SubCommands::List(options) => commands::list::run(options)?,
         SubCommands::Log(options) => commands::log::run(options)?,
-        SubCommands::Init(options) => commands::init::run(options).await?,
+        SubCommands::Init => commands::init::run().await?,
     };
 
     Ok(())

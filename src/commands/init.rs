@@ -7,15 +7,14 @@ use crate::{db, util};
 
 use clap::Parser;
 
-#[derive(Parser, Debug)]
-pub(crate) struct InitArgs {
-    /// This subcommand is not currently used
-    #[arg(short, long)]
-    name: String,
-}
+// #[derive(Parser, Debug)]
+// pub(crate) struct InitArgs {
+//     /// This subcommand is not currently used
+//     #[arg(short, long)]
+//     name: String,
+// }
 
-pub(crate) async fn run(options: InitArgs) -> Result<(), Box<dyn Error>> {
-    println!("kata name {}", options.name);
+pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["location"].as_str()  {
         let mut conn = SqliteConnectOptions::from_str(&format!("sqlite://{loc}"))?
