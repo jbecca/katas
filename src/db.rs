@@ -13,8 +13,8 @@ pub async fn setup_tables(conn: &mut SqliteConnection) {
 
 pub async fn insert_kata_name(conn: &mut SqliteConnection, kata_name: String) {
     let result = sqlx::query(
-        &format!("INSERT into katas VALUES {kata_name}")
-    )
+        r#"INSERT into katas (name) VALUES ( ?1 );"#)
+    .bind(kata_name.as_str())
     .execute(conn)
     .await
     .unwrap();
