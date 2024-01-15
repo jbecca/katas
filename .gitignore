@@ -17,3 +17,6 @@ Cargo.lock
 # Added by cargo
 
 /target
+
+# ignore db file
+*.db
