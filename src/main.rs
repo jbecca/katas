@@ -3,7 +3,7 @@ use std::error::Error;
 
 mod commands;
 mod util;
-mod db;
+use lib_katas::db;
 
 #[derive(Subcommand, Debug)]
 enum SubCommands {
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn Error + 'static>> {
     let args = Args::parse();
 
     match args.command {
-        SubCommands::List(options) => commands::list::run(options)?,
+        SubCommands::List(options) => commands::list::run(options).await?,
         SubCommands::Log(options) => commands::log::run(options)?,
         SubCommands::Init => commands::init::run().await?,
         SubCommands::Add(options) => commands::add::run(options).await?

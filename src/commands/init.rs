@@ -3,16 +3,7 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
 use std::str::FromStr;
 use sqlx::ConnectOptions;
 
-use crate::{db, util};
-
-use clap::Parser;
-
-// #[derive(Parser, Debug)]
-// pub(crate) struct InitArgs {
-//     /// This subcommand is not currently used
-//     #[arg(short, long)]
-//     name: String,
-// }
+use crate::util;
 
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
@@ -23,7 +14,7 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
             .read_only(false)
             .connect()
             .await?;
-        db::setup_tables(&mut conn).await;
+        lib_katas::db::setup_tables(&mut conn).await;
         Ok(())
     } else {
         Err("key location not found in TOML file".into())

@@ -1,4 +1,4 @@
-mod db;
+pub mod db;
 use rand::Rng;
 
 pub fn test() {
