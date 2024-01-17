@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::error::Error;
 use std::str::FromStr;
-use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
+use sqlx::sqlite::{SqlitePool, SqliteJournalMode};
 use sqlx::ConnectOptions;
 
 use crate::util;
@@ -16,13 +16,8 @@ pub struct ListArgs {
 pub(crate) async fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["location"].as_str()  {
-        let mut conn = SqliteConnectOptions::from_str(&format!("sqlite://{loc}"))?
-            .create_if_missing(true)
-            .journal_mode(SqliteJournalMode::Wal)
-            .read_only(false)
-            .connect()
-            .await?;
-        db::list_n_katas(&mut conn, &options.number).await;
+        let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
+        db::list_n_katas(&pool, &options.number).await;
         Ok(())
     } else {
         Err("key location not found in TOML file".into())

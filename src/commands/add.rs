@@ -1,5 +1,5 @@
 use std::error::Error;
-use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
+use sqlx::sqlite::{SqlitePool, SqliteJournalMode};
 use std::str::FromStr;
 use sqlx::ConnectOptions;
 
@@ -16,13 +16,8 @@ pub(crate) struct AddArgs {
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["location"].as_str()  {
-        let mut conn = SqliteConnectOptions::from_str(&format!("sqlite://{loc}"))?
-            .create_if_missing(true)
-            .journal_mode(SqliteJournalMode::Wal)
-            .read_only(false)
-            .connect()
-            .await?;
-        let result = db::insert_kata_name(&mut conn, args.name).await;
+        let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
+        let result = db::insert_kata_name(&pool, args.name).await;
         println!("{:?}", result);
         Ok(())
     } else {
