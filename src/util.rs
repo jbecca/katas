@@ -6,9 +6,11 @@ use std::env;
 use std::error::Error;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
-pub(crate) enum Status {
-    Success,
-    Failure,
+pub enum Language {
+    Rust,
+    Python,
+    Cxx,
+    Lua
 }
 
 pub fn get_style() -> clap::builder::Styles {

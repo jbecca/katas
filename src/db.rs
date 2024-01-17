@@ -1,6 +1,7 @@
 use std::error::Error;
 
 use sqlx::{Row, SqlitePool};
+use crate::util::Language;
 
 pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     let mut conn = pool.acquire().await?;
@@ -15,7 +16,10 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
 
     let status_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
-        status (id INTEGER, status BOOL,
+        status (
+        id INTEGER, 
+        time TEXT,
+        language VARCHAR(20),
         FOREIGN KEY(id) REFERENCES katas(id))"#
     )
     .execute(pool)
@@ -46,4 +50,9 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) {
     for (idx, row) in results.iter().enumerate() {
         println!("[{}]: {:?}", idx, row.get::<String, &str>("name"));
     }
+}
+
+pub async fn log_kata(pool: &SqlitePool, kata_name: String, language: Language) -> Result<(), Box<dyn Error>> {
+    unimplemented!()
+
 }

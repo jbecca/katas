@@ -1,8 +1,8 @@
 use std::error::Error;
 
-use sqlx::sqlite::SqlitePool;
+use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};
 
-use crate::util;
+use lib_katas::util;
 
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;

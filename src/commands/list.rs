@@ -1,4 +1,4 @@
-use crate::util;
+use lib_katas::util;
 use clap::Parser;
 use lib_katas::db;
 use sqlx::sqlite::SqlitePool;

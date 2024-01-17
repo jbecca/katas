@@ -1,7 +1,8 @@
 use std::error::Error;
 
-use crate::util::Status;
+use lib_katas::util::{Language, parse_config};
 use clap::Parser;
+use sqlx::sqlite::SqlitePool;
 
 #[derive(Parser, Debug)]
 pub(crate) struct LogArgs {
@@ -9,11 +10,18 @@ pub(crate) struct LogArgs {
     #[arg(short, long)]
     name: String,
 
-    /// status of the kata attempt
+    /// language used for the kata
     #[arg(short, long, value_enum)]
-    status: Status,
+    language: Language,
 }
 
-pub(crate) fn run(_options: LogArgs) -> Result<(), Box<dyn Error>> {
-    unimplemented!()
+pub(crate) async fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
+    let user_cfg = parse_config()?;
+    if let Some(loc) = user_cfg["location"].as_str() {
+        let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
+        lib_katas::db::log_kata(&pool, options.name, options.language).await?;
+        Ok(())
+    } else {
+        Err("key location not found in TOML file".into())
+    }
 }

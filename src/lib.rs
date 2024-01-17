@@ -1,5 +1,5 @@
 pub mod db;
-
+pub mod util;
 
 pub fn test() {
     println!("Test");

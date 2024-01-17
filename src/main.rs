@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 use std::error::Error;
 
 mod commands;
-mod util;
+use lib_katas::util;
 use lib_katas::db;
 
 #[derive(Subcommand, Debug)]
@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn Error + 'static>> {
 
     match args.command {
         SubCommands::List(options) => commands::list::run(options).await?,
-        SubCommands::Log(options) => commands::log::run(options)?,
+        SubCommands::Log(options) => commands::log::run(options).await?,
         SubCommands::Init => commands::init::run().await?,
         SubCommands::Add(options) => commands::add::run(options).await?
     };
