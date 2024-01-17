@@ -1,5 +1,5 @@
 pub mod db;
-use rand::Rng;
+
 
 pub fn test() {
     println!("Test");

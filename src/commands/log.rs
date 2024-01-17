@@ -14,6 +14,6 @@ pub(crate) struct LogArgs {
     status: Status,
 }
 
-pub(crate) fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
+pub(crate) fn run(_options: LogArgs) -> Result<(), Box<dyn Error>> {
     unimplemented!()
 }
