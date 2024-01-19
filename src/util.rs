@@ -7,10 +7,10 @@ use std::error::Error;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
 pub enum Language {
-    Rust,
-    Python,
-    Cxx,
-    Lua
+    Rust = 1,
+    Python = 2,
+    C = 3,
+    Lua = 4 
 }
 
 pub fn get_style() -> clap::builder::Styles {

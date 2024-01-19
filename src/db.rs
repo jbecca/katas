@@ -17,9 +17,9 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     let status_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
         status (
-        id INTEGER, 
-        time TEXT,
-        language VARCHAR(20),
+        id INTEGER NOT NULL, 
+        time TEXT NOT NULL,
+        language INTEGER NOT NULL,
         FOREIGN KEY(id) REFERENCES katas(id))"#
     )
     .execute(pool)
@@ -53,6 +53,27 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) {
 }
 
 pub async fn log_kata(pool: &SqlitePool, kata_name: String, language: Language) -> Result<(), Box<dyn Error>> {
-    unimplemented!()
+    let result = sqlx::query(r#"UPDATE status SET time = datetime() WHERE id = (SELECT id from katas WHERE name = ?1) AND language = ?2;"#)
+        .bind(kata_name.as_str())
+        .bind(language as i32)
+        .execute(pool)
+        .await?
+        .rows_affected();
 
+    println!("Rows updated: {}", result);
+    if result <= 0 {
+            let insert_statement = sqlx::query(r#"INSERT into status (id, time, language) VALUES ((SELECT id from katas WHERE name = ?1), datetime(), ?2);"#)
+                .bind(kata_name.as_str())
+                .bind(language as i32)
+                .execute(pool)
+                .await?
+                .rows_affected();
+            println!("Rows updated: {}", insert_statement);
+    }
+    else {
+        ()
+    };
+
+
+    Ok(())
 }
