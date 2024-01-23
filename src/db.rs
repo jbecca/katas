@@ -40,16 +40,18 @@ pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
     println!("Result: {:?}", result);
 }
 
-pub async fn list_n_katas(conn: &SqlitePool, number: &u32) {
-    let results = sqlx::query(r#"SELECT * from katas LIMIT ?1;"#)
+pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
+    let results = sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#)
         .bind(number.to_string())
         .fetch_all(conn)
-        .await
-        .unwrap();
+        .await?;
 
+    println!("id       name        time          language");
     for (idx, row) in results.iter().enumerate() {
-        println!("[{}]: {:?}", idx, row.get::<String, &str>("name"));
-    }
+        println!("[{}]: {:?} {:?} {:?}", idx, row.get::<String, &str>("name"), row.get::<String, &str>("time"), row.get::<i32, &str>("language"));
+    };
+
+    Ok(())
 }
 
 pub async fn log_kata(pool: &SqlitePool, kata_name: String, language: Language) -> Result<(), Box<dyn Error>> {

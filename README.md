@@ -6,7 +6,7 @@ Extremely lofty goals include having a tool that generates input in which the ka
 ## Current TODOs
 - [x] Add command for creating database if not present
 - [x] Set up default location for database (use configuration file for this)
-- [ ] Add in database helper functions for logging new katas
+- [x] Add in database helper functions for logging new katas
 - [ ] Add in database helper functions for getting stats on katas
 - [ ] Add trivial spaced repetition algorithm
 - [ ] Create interface with CLI for grabbing katas to retest
