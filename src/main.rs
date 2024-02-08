@@ -15,6 +15,8 @@ enum SubCommands {
     Init,
     /// Add new kata to local database
     Add(commands::add::AddArgs),
+    /// Get kata that needs practice
+    Get,
 }
 
 #[derive(Parser, Debug)]
@@ -33,7 +35,8 @@ async fn main() -> Result<(), Box<dyn Error + 'static>> {
         SubCommands::List(options) => commands::list::run(options).await?,
         SubCommands::Log(options) => commands::log::run(options).await?,
         SubCommands::Init => commands::init::run().await?,
-        SubCommands::Add(options) => commands::add::run(options).await?
+        SubCommands::Add(options) => commands::add::run(options).await?,
+        SubCommands::Get => commands::get::run().await?,
     };
 
     Ok(())
