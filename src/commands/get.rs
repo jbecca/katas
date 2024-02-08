@@ -1,6 +1,6 @@
-use lib_katas::util;
 use clap::Parser;
 use lib_katas::db;
+use lib_katas::util;
 use sqlx::sqlite::SqlitePool;
 use std::error::Error;
 

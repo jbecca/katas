@@ -1,7 +1,7 @@
 use std::error::Error;
 
-use lib_katas::util::{Language, parse_config};
 use clap::Parser;
+use lib_katas::util::{parse_config, Language};
 use sqlx::sqlite::SqlitePool;
 
 #[derive(Parser, Debug)]

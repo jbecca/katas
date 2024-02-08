@@ -2,8 +2,8 @@ use clap::{Parser, Subcommand};
 use std::error::Error;
 
 mod commands;
-use lib_katas::util;
 use lib_katas::db;
+use lib_katas::util;
 
 #[derive(Subcommand, Debug)]
 enum SubCommands {
