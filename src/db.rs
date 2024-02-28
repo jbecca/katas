@@ -25,8 +25,21 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     .execute(pool)
     .await
     .unwrap();
-
     println!("Result: {:?}", status_table_result);
+
+    let template_table_result = sqlx::query(
+        r#"CREATE TABLE IF NOT EXISTS
+        template (
+        id INTEGER NOT NULL,
+        deps TEXT NOT NULL,
+        src TEXT NOT NULL,
+        FOREIGN KEY(id) REFERENCES katas(id))"#
+    )
+    .execute(pool)
+    .await
+    .unwrap();
+    println!("Result: {:?}", template_table_result);
+
     Ok(())
 }
 
