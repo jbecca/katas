@@ -53,6 +53,18 @@ pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
     println!("Result: {:?}", result);
 }
 
+pub async fn insert_kata_code(conn: &SqlitePool, kata_name: String, kata_deps: Vec<String>) {
+    // select out kata id using name
+    //
+    // build string for main.rs
+    //
+    // mkdir for temp crate
+    // build string for Cargo toml
+    // write Cargo.toml
+    // write main.rs
+    unimplemented!();
+}
+
 pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
     let results =
         sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#)
