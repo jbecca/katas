@@ -1,6 +1,7 @@
 use crate::{db, util};
 use sqlx::sqlite::SqlitePool;
 use std::{error::Error, path::{Path, PathBuf}};
+use toml::Table;
 
 use clap::Parser;
 
@@ -40,6 +41,15 @@ pub(crate) fn create_cargo_toml(path: PathBuf) -> Result<String, Box<dyn Error>>
     Ok(toml_str)
 }
 
+pub(crate) fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
+    let file_path = path.join("config.toml");
+    let kata_config = std::fs::read_to_string(file_path)?
+        .parse::<Table>()
+        .expect("file was not TOML parsible");
+    Ok(kata_config)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -49,12 +59,19 @@ mod tests {
     #[test]
     fn test_rust_main() {
         let p = PathBuf::from("/Users/jeffreybecca/projects/katas/testdir");
-        assert_eq!(parse_rust_main(p).unwrap(), String::from("this is a string"));
+        assert_eq!(parse_rust_main(p).unwrap(), String::from("fn main() {\n    println!(\"Hello, world!\");\n}\n"));
     }
 
     #[test]
     fn test_cargo_toml() {
         let p = PathBuf::from("/Users/jeffreybecca/projects/katas/testdir");
-        assert_eq!(create_cargo_toml(p).unwrap(), String::from("this is a string"));
+        assert_eq!(create_cargo_toml(p).unwrap(), String::from("[package]\nname = \"testdir\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html\n\n[dependencies]\n"));
+    }
+
+    #[test]
+    fn test_kata_cfg() {
+        let p = PathBuf::from("/Users/jeffreybecca/projects/katas/testdir");
+        let cfg = read_kata_toml(p).unwrap();
+        assert_eq!(cfg["name"].as_str(), Some("test_kata_1"))
     }
 }
