@@ -6,12 +6,13 @@ use sqlx::{Row, SqlitePool};
 pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     let mut conn = pool.acquire().await?;
     let name_table_result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS 
-        katas (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(140) NOT NULL);",
+        r#"CREATE TABLE IF NOT EXISTS
+        katas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name VARCHAR(140) NOT NULL);"#,
     )
     .execute(&mut *conn)
-    .await
-    .unwrap();
+    .await?;
     println!("Result: {:?}", name_table_result);
 
     let status_table_result = sqlx::query(
@@ -23,21 +24,19 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         FOREIGN KEY(id) REFERENCES katas(id))"#,
     )
     .execute(pool)
-    .await
-    .unwrap();
+    .await?;
     println!("Result: {:?}", status_table_result);
 
     let template_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
-        template (
+        rust (
         id INTEGER NOT NULL,
-        deps TEXT NOT NULL,
-        src TEXT NOT NULL,
-        FOREIGN KEY(id) REFERENCES katas(id))"#
+        main TEXT NOT NULL,
+        cargo TEXT NOT NULL,
+        FOREIGN KEY(id) REFERENCES katas(id))"#,
     )
     .execute(pool)
-    .await
-    .unwrap();
+    .await?;
     println!("Result: {:?}", template_table_result);
 
     Ok(())
@@ -51,18 +50,6 @@ pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
         .unwrap();
 
     println!("Result: {:?}", result);
-}
-
-pub async fn insert_kata_code(conn: &SqlitePool, kata_name: String, kata_deps: Vec<String>) {
-    // select out kata id using name
-    //
-    // build string for main.rs
-    //
-    // mkdir for temp crate
-    // build string for Cargo toml
-    // write Cargo.toml
-    // write main.rs
-    unimplemented!();
 }
 
 pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
