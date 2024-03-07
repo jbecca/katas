@@ -78,23 +78,6 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
     Ok(())
 }
 
-pub async fn get_kata(conn: &SqlitePool) -> Result<(), Box<dyn Error>> {
-    let results = sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id ORDER BY time ASC LIMIT 1;"#)
-        .fetch_all(conn)
-        .await?;
-    println!("id       name        time         language");
-    for (idx, row) in results.iter().enumerate() {
-        println!(
-            "[{}>10]: {:>24} {:>24} {:>24} ",
-            idx,
-            row.get::<String, &str>("name"),
-            row.get::<String, &str>("time"),
-            row.get::<String, &str>("language")
-        );
-    }
-
-    Ok(())
-}
 
 pub async fn log_kata(
     pool: &SqlitePool,
