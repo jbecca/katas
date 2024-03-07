@@ -1,7 +1,7 @@
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::ValueEnum;
-use std::env;
+use std::{env, fmt};
 use std::error::Error;
 use toml::Table;
 
@@ -11,6 +11,17 @@ pub enum Language {
     Python = 2,
     C = 3,
     Lua = 4,
+}
+
+impl fmt::Display for Language {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            Self::Rust => write!(f, "Rust"),
+            Self::Python => write!(f, "Python"),
+            Self::C => write!(f, "C"),
+            Self::Lua => write!(f, "Lua")
+        }
+    }
 }
 
 pub fn get_style() -> clap::builder::Styles {

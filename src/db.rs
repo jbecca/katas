@@ -6,12 +6,13 @@ use sqlx::{Row, SqlitePool};
 pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     let mut conn = pool.acquire().await?;
     let name_table_result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS 
-        katas (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(140) NOT NULL);",
+        r#"CREATE TABLE IF NOT EXISTS
+        katas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE);"#,
     )
     .execute(&mut *conn)
-    .await
-    .unwrap();
+    .await?;
     println!("Result: {:?}", name_table_result);
 
     let status_table_result = sqlx::query(
@@ -19,14 +20,25 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         status (
         id INTEGER NOT NULL, 
         time TEXT NOT NULL,
-        language INTEGER NOT NULL,
-        FOREIGN KEY(id) REFERENCES katas(id))"#,
+        language TEXT NOT NULL,
+        FOREIGN KEY (id) REFERENCES katas(id))"#,
     )
     .execute(pool)
-    .await
-    .unwrap();
-
+    .await?;
     println!("Result: {:?}", status_table_result);
+
+    let template_table_result = sqlx::query(
+        r#"CREATE TABLE IF NOT EXISTS
+        rust (
+        id INTEGER NOT NULL,
+        main TEXT NOT NULL,
+        cargo TEXT NOT NULL,
+        FOREIGN KEY (id) REFERENCES katas(id))"#,
+    )
+    .execute(pool)
+    .await?;
+    println!("Result: {:?}", template_table_result);
+
     Ok(())
 }
 
@@ -47,59 +59,52 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
             .fetch_all(conn)
             .await?;
 
-    println!("id       name        time          language");
+    println!(
+        "{:>4} {:>24} {:>24} {:>10} ",
+        "id",
+        "name",
+        "time",
+        "language");
     for (idx, row) in results.iter().enumerate() {
         println!(
-            "[{}]: {:?} {:?} {:?}",
+            "{:>4} {:>24} {:>24} {:>10} ",
             idx,
             row.get::<String, &str>("name"),
             row.get::<String, &str>("time"),
-            row.get::<i32, &str>("language")
+            row.get::<String, &str>("language")
         );
     }
 
     Ok(())
 }
 
-pub async fn get_kata(conn: &SqlitePool) -> Result<(), Box<dyn Error>> {
-    let results = sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id ORDER BY time ASC LIMIT 1;"#)
-        .fetch_all(conn)
-        .await?;
-    println!("id       name        time         language");
-    for (idx, row) in results.iter().enumerate() {
-        println!(
-            "[{}]: {:?} {:?} {:?} ",
-            idx,
-            row.get::<String, &str>("name"),
-            row.get::<String, &str>("time"),
-            row.get::<i32, &str>("language")
-        );
-    }
-
-    Ok(())
-}
 
 pub async fn log_kata(
     pool: &SqlitePool,
     kata_name: String,
     language: Language,
 ) -> Result<(), Box<dyn Error>> {
-    let result = sqlx::query(r#"UPDATE status SET time = datetime() WHERE id = (SELECT id from katas WHERE name = ?1) AND language = ?2;"#)
+    let result = sqlx::query(r#"UPDATE status SET time = datetime() WHERE id = (SELECT id from katas WHERE name = $1 ) AND language = ?2;"#)
         .bind(kata_name.as_str())
-        .bind(language as i32)
+        .bind(language.to_string())
         .execute(pool)
         .await?
         .rows_affected();
 
-    println!("Rows updated: {}", result);
+    println!("Rows updated 1: {}", result);
     if result <= 0 {
-        let insert_statement = sqlx::query(r#"INSERT into status (id, time, language) VALUES ((SELECT id from katas WHERE name = ?1), datetime(), ?2);"#)
+        println!("tryng to insert into status");
+        dbg!(kata_name.as_str());
+        println!("{:?}", "test_kata_1");
+        let insert_statement = sqlx::query(
+            r#"INSERT into status (id, time, language)
+               VALUES ((SELECT id from katas WHERE name = $1 ), datetime("1970-01-01 00:00:00"), $2);"#)
                 .bind(kata_name.as_str())
-                .bind(language as i32)
+                .bind(language.to_string())
                 .execute(pool)
                 .await?
                 .rows_affected();
-        println!("Rows updated: {}", insert_statement);
+        println!("Rows updated 2: {}", insert_statement);
     } else {
         ()
     };
