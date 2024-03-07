@@ -1,5 +1,6 @@
 use crate::{db, util};
-use sqlx::sqlite::SqlitePool;
+use sqlx::{Row, SqlitePool};
+use sqlx::types::Text;
 use std::{
     error::Error,
     path::{Path, PathBuf},
@@ -37,14 +38,27 @@ fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["location"].as_str() {
-        let pool = SqlitePool::connect(&format!("sqlite:://{loc}")).await?;
+        let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let rust_main = read_rust_main(args.path.clone())?;
         let cargo_toml = read_cargo_toml(args.path.clone())?;
         let kata_cfg = read_kata_toml(args.path.clone())?;
-        let result = sqlx::query(
+
+        // set status of kata to a very old time, so it will come up as due
+        let kata_name = kata_cfg["name"].as_str().unwrap().to_owned();
+
+       let result = sqlx::query(
+           r#"
+           INSERT into katas (name) VALUES ( ?1 );"#
+       ).bind(kata_cfg["name"].as_str().unwrap())
+       .execute(&pool)
+       .await?
+       .rows_affected();
+        println!("rows added (result) {:?}", result);
+
+        let result2 = sqlx::query(
             r#"
             INSERT into rust (id, main, cargo)
-            VALUES ((SELECT id from katas WHERE name = ?1), ?2, ?3);"#,
+            VALUES ((SELECT id from katas WHERE name = $1), ?2, ?3);"#,
         )
         .bind(kata_cfg["name"].as_str())
         .bind(rust_main)
@@ -52,7 +66,10 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         .execute(&pool)
         .await?
         .rows_affected();
-        println!("{:?}", result);
+        println!("rows added {:?}", result2);
+
+        // set status of kata to a very old time, so it will come up as due
+        db::log_kata(&pool, kata_name, util::Language::Rust).await?;
         Ok(())
     } else {
         Err("key location not found in TOML file".into())
