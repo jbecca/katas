@@ -1,6 +1,6 @@
 use crate::{db, util};
-use sqlx::{Row, SqlitePool};
 use sqlx::types::Text;
+use sqlx::{Row, SqlitePool};
 use std::{
     error::Error,
     path::{Path, PathBuf},
@@ -46,13 +46,14 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         // set status of kata to a very old time, so it will come up as due
         let kata_name = kata_cfg["name"].as_str().unwrap().to_owned();
 
-       let result = sqlx::query(
-           r#"
-           INSERT into katas (name) VALUES ( ?1 );"#
-       ).bind(kata_cfg["name"].as_str().unwrap())
-       .execute(&pool)
-       .await?
-       .rows_affected();
+        let result = sqlx::query(
+            r#"
+           INSERT into katas (name) VALUES ( ?1 );"#,
+        )
+        .bind(kata_cfg["name"].as_str().unwrap())
+        .execute(&pool)
+        .await?
+        .rows_affected();
         println!("rows added (result) {:?}", result);
 
         let result2 = sqlx::query(

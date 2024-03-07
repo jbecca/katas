@@ -61,10 +61,8 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
 
     println!(
         "{:>4} {:>24} {:>24} {:>10} ",
-        "id",
-        "name",
-        "time",
-        "language");
+        "id", "name", "time", "language"
+    );
     for (idx, row) in results.iter().enumerate() {
         println!(
             "{:>4} {:>24} {:>24} {:>10} ",
@@ -77,7 +75,6 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
 
     Ok(())
 }
-
 
 pub async fn log_kata(
     pool: &SqlitePool,

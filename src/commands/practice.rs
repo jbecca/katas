@@ -1,9 +1,9 @@
 use lib_katas::util;
 use sqlx::sqlite::SqlitePool;
+use sqlx::Row;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
-use sqlx::Row;
 
 /// Get the oldest kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
@@ -26,16 +26,21 @@ async fn find_oldest_kata(conn: &SqlitePool) -> Result<(String, String, String),
         LEFT JOIN rust
         ON katas.id = rust.id
         ORDER BY time
-        ASC LIMIT 1;"#)
-        .fetch_one(conn)
-        .await?;
+        ASC LIMIT 1;"#,
+    )
+    .fetch_one(conn)
+    .await?;
     let kata_name = result.get::<String, &str>("name");
     let cargo = result.get::<String, &str>("cargo");
     let main = result.get::<String, &str>("main");
     Ok((kata_name, cargo, main))
 }
 
-fn setup_kata(kata_name: String, main_string: String, cargo_string: String) -> Result<(), Box<dyn Error>> {
+fn setup_kata(
+    kata_name: String,
+    main_string: String,
+    cargo_string: String,
+) -> Result<(), Box<dyn Error>> {
     let mut cwd = std::env::current_dir()?;
     cwd.push(kata_name);
     cwd.push("src");

@@ -1,8 +1,8 @@
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::ValueEnum;
-use std::{env, fmt};
 use std::error::Error;
+use std::{env, fmt};
 use toml::Table;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
@@ -19,7 +19,7 @@ impl fmt::Display for Language {
             Self::Rust => write!(f, "Rust"),
             Self::Python => write!(f, "Python"),
             Self::C => write!(f, "C"),
-            Self::Lua => write!(f, "Lua")
+            Self::Lua => write!(f, "Lua"),
         }
     }
 }
