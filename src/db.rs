@@ -20,7 +20,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         status (
         id INTEGER NOT NULL, 
         time TEXT NOT NULL,
-        language INTEGER NOT NULL,
+        language TEXT NOT NULL,
         FOREIGN KEY (id) REFERENCES katas(id))"#,
     )
     .execute(pool)
@@ -71,7 +71,7 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
             idx,
             row.get::<String, &str>("name"),
             row.get::<String, &str>("time"),
-            row.get::<i32, &str>("language")
+            row.get::<String, &str>("language")
         );
     }
 
@@ -89,7 +89,7 @@ pub async fn get_kata(conn: &SqlitePool) -> Result<(), Box<dyn Error>> {
             idx,
             row.get::<String, &str>("name"),
             row.get::<String, &str>("time"),
-            row.get::<i32, &str>("language")
+            row.get::<String, &str>("language")
         );
     }
 
@@ -103,7 +103,7 @@ pub async fn log_kata(
 ) -> Result<(), Box<dyn Error>> {
     let result = sqlx::query(r#"UPDATE status SET time = datetime() WHERE id = (SELECT id from katas WHERE name = $1 ) AND language = ?2;"#)
         .bind(kata_name.as_str())
-        .bind(language as i32)
+        .bind(language.to_string())
         .execute(pool)
         .await?
         .rows_affected();
@@ -117,7 +117,7 @@ pub async fn log_kata(
             r#"INSERT into status (id, time, language)
                VALUES ((SELECT id from katas WHERE name = $1 ), datetime("1970-01-01 00:00:00"), $2);"#)
                 .bind(kata_name.as_str())
-                .bind(language as i32)
+                .bind(language.to_string())
                 .execute(pool)
                 .await?
                 .rows_affected();
