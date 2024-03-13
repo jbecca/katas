@@ -17,6 +17,8 @@ enum SubCommands {
     Add(commands::add::AddArgs),
     /// Get kata that needs practice
     Practice,
+    /// Delete a kata from the database
+    Delete(commands::delete::DeleteArgs)
 }
 
 #[derive(Parser, Debug)]
@@ -37,6 +39,7 @@ async fn main() -> Result<(), Box<dyn Error + 'static>> {
         SubCommands::Init => commands::init::run().await?,
         SubCommands::Add(options) => commands::add::run(options).await?,
         SubCommands::Practice => commands::practice::run().await?,
+        SubCommands::Delete(options) => commands::delete::run(options).await?
     };
 
     Ok(())

@@ -21,7 +21,8 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         id INTEGER NOT NULL, 
         time TEXT NOT NULL,
         language TEXT NOT NULL,
-        FOREIGN KEY (id) REFERENCES katas(id))"#,
+        FOREIGN KEY (id) REFERENCES katas(id)
+        ON DELETE CASCADE ON UPDATE CASCADE);"#,
     )
     .execute(pool)
     .await?;
@@ -33,7 +34,8 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         id INTEGER NOT NULL,
         main TEXT NOT NULL,
         cargo TEXT NOT NULL,
-        FOREIGN KEY (id) REFERENCES katas(id))"#,
+        FOREIGN KEY (id) REFERENCES katas(id)
+        ON DELETE CASCADE ON UPDATE CASCADE);"#,
     )
     .execute(pool)
     .await?;
@@ -102,8 +104,6 @@ pub async fn log_kata(
                 .await?
                 .rows_affected();
         println!("Rows updated 2: {}", insert_statement);
-    } else {
-        ()
     };
 
     Ok(())
