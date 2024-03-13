@@ -1,12 +1,10 @@
 use crate::{db, util};
-use sqlx::types::Text;
-use sqlx::{Row, SqlitePool};
+use sqlx::SqlitePool;
 use std::{
     error::Error,
-    path::{Path, PathBuf},
+    path::PathBuf,
 };
 use toml::Table;
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]

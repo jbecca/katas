@@ -1,14 +1,7 @@
-use crate::{db, util};
-use lib_katas::util::Language;
-use sqlx::types::Text;
-use sqlx::{Row, SqlitePool};
-use std::{
-    error::Error,
-    path::{Path, PathBuf},
-};
-use toml::Table;
-
+use crate::util;
 use clap::Parser;
+use sqlx::SqlitePool;
+use std::error::Error;
 
 #[derive(Parser, Debug)]
 pub(crate) struct DeleteArgs {
@@ -31,7 +24,6 @@ pub(crate) async fn run(args: DeleteArgs) -> Result<(), Box<dyn Error>> {
         .rows_affected();
         println!("rows deleted (result) {:?}", result);
         Ok(())
-
     } else {
         Err("key location not found in TOML file".into())
     }

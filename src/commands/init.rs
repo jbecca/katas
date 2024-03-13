@@ -2,7 +2,7 @@ use std::error::Error;
 
 use sqlx::{
     migrate::MigrateDatabase,
-    sqlite::{Sqlite, SqlitePool, SqlitePoolOptions},
+    sqlite::{Sqlite, SqlitePool},
 };
 
 use lib_katas::util;
