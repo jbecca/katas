@@ -11,7 +11,7 @@ pub(crate) struct DeleteArgs {
 
 pub(crate) async fn run(args: DeleteArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
-    if let Some(loc) = user_cfg["location"].as_str() {
+    if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let result = sqlx::query(
             r#"
@@ -25,6 +25,6 @@ pub(crate) async fn run(args: DeleteArgs) -> Result<(), Box<dyn Error>> {
         println!("rows deleted (result) {:?}", result);
         Ok(())
     } else {
-        Err("key location not found in TOML file".into())
+        Err("key db_location not found in TOML file".into())
     }
 }

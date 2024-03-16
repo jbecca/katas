@@ -17,11 +17,11 @@ pub(crate) struct LogArgs {
 
 pub(crate) async fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = parse_config()?;
-    if let Some(loc) = user_cfg["location"].as_str() {
+    if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         lib_katas::db::log_kata(&pool, options.name, options.language).await?;
         Ok(())
     } else {
-        Err("key location not found in TOML file".into())
+        Err("key db_location not found in TOML file".into())
     }
 }

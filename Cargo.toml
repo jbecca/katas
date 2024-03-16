@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.12", features = ["derive"] }
+crossterm = "0.27.0"
 rand = "0.8.5"
+ratatui = "0.26.1"
 sqlx = { version = "0.7.3", features = ["sqlx-sqlite", "runtime-tokio", "sqlite", "macros"] }
 tokio = { version = "1.35.1", features = ["full"] }
 toml = "0.8.8"

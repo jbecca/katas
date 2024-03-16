@@ -35,7 +35,7 @@ fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
 
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
-    if let Some(loc) = user_cfg["location"].as_str() {
+    if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let rust_main = read_rust_main(args.path.clone())?;
         let cargo_toml = read_cargo_toml(args.path.clone())?;
@@ -71,7 +71,7 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         db::log_kata(&pool, kata_name, util::Language::Rust).await?;
         Ok(())
     } else {
-        Err("key location not found in TOML file".into())
+        Err("key db_location not found in TOML file".into())
     }
 }
 

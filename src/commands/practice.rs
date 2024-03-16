@@ -8,13 +8,13 @@ use std::io::prelude::*;
 /// Get the oldest kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
-    if let Some(loc) = user_cfg["location"].as_str() {
+    if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let (kata_name, cg, main) = find_oldest_kata(&pool).await?;
         setup_kata(kata_name, main, cg)?;
         Ok(())
     } else {
-        Err("key location not found in TOML file".into())
+        Err("key db_location not found in TOML file".into())
     }
 }
 

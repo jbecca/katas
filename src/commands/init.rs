@@ -9,7 +9,7 @@ use lib_katas::util;
 
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
-    if let Some(loc) = user_cfg["location"].as_str() {
+    if let Some(loc) = user_cfg["db_location"].as_str() {
         if !Sqlite::database_exists(&format!("sqlite://{loc}"))
             .await
             .unwrap_or(false)
@@ -28,6 +28,6 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
         }
         Ok(())
     } else {
-        Err("key location not found in TOML file".into())
+        Err("key db_location not found in TOML file".into())
     }
 }
