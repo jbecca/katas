@@ -4,6 +4,7 @@ use sqlx::Row;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::PathBuf;
 
 /// Get the oldest kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
@@ -11,7 +12,12 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let (kata_name, cg, main) = find_oldest_kata(&pool).await?;
-        setup_kata(kata_name, main, cg)?;
+        if let Some(practice_path) = user_cfg["practice_location"].as_str() {
+            setup_kata(kata_name, main, cg, practice_path.into())?
+        } else {
+            let temp_path = std::env::current_dir();
+            setup_kata(kata_name, main, cg, temp_path?)?;
+        }
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())
@@ -40,8 +46,9 @@ fn setup_kata(
     kata_name: String,
     main_string: String,
     cargo_string: String,
+    path: PathBuf
 ) -> Result<(), Box<dyn Error>> {
-    let mut cwd = std::env::current_dir()?;
+    let mut cwd = path.clone();
     cwd.push(kata_name);
     cwd.push("src");
     std::fs::create_dir_all(cwd.as_path())?;
