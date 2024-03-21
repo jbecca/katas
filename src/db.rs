@@ -53,7 +53,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     .execute(pool)
     .await?;
 
-    println!("Result: {:?}", attempts_table_result)
+    println!("Result: {:?}", attempts_table_result);
 
     Ok(())
 }

@@ -24,6 +24,25 @@ impl fmt::Display for Language {
     }
 }
 
+#[derive(Copy, Clone, Debug, ValueEnum)]
+pub enum Difficulty {
+    Easy,
+    Medium,
+    Hard,
+    VeryHard
+}
+
+impl fmt::Display for Difficulty {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            Self::Easy => write!(f, "Easy"),
+            Self::Medium => write!(f, "Medium"),
+            Self::Hard => write!(f, "Hard"),
+            Self::VeryHard => write!(f, "Very Hard")
+        }
+    }
+}
+
 pub fn get_style() -> clap::builder::Styles {
     Styles::styled()
         .header(AnsiColor::Yellow.on_default())
