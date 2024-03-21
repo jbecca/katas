@@ -38,7 +38,7 @@ async fn log_kata(
     .rows_affected();
 
     println!("Rows updated 1: {}", result);
-    if result <= 0 {
+    if result == 0 {
         println!("tryng to insert into status");
         dbg!(kata_name.as_str());
         println!("{:?}", "test_kata_1");
