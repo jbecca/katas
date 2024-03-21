@@ -21,3 +21,4 @@ Cargo.lock
 # ignore db file
 *.db
 *.db-wal
+*.db-*
