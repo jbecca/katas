@@ -1,6 +1,5 @@
 use std::error::Error;
 
-use crate::util::Language;
 use sqlx::{Row, SqlitePool};
 
 pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
@@ -92,33 +91,3 @@ pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn
     Ok(())
 }
 
-pub async fn log_kata(
-    pool: &SqlitePool,
-    kata_name: String,
-    language: Language,
-) -> Result<(), Box<dyn Error>> {
-    let result = sqlx::query(r#"UPDATE status SET time = datetime() WHERE id = (SELECT id from katas WHERE name = $1 ) AND language = ?2;"#)
-        .bind(kata_name.as_str())
-        .bind(language.to_string())
-        .execute(pool)
-        .await?
-        .rows_affected();
-
-    println!("Rows updated 1: {}", result);
-    if result <= 0 {
-        println!("tryng to insert into status");
-        dbg!(kata_name.as_str());
-        println!("{:?}", "test_kata_1");
-        let insert_statement = sqlx::query(
-            r#"INSERT into status (id, time, language)
-               VALUES ((SELECT id from katas WHERE name = $1 ), datetime("1970-01-01 00:00:00"), $2);"#)
-                .bind(kata_name.as_str())
-                .bind(language.to_string())
-                .execute(pool)
-                .await?
-                .rows_affected();
-        println!("Rows updated 2: {}", insert_statement);
-    };
-
-    Ok(())
-}
