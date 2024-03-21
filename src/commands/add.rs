@@ -1,4 +1,4 @@
-use crate::{db, util};
+use crate::util;
 use sqlx::SqlitePool;
 use std::{
     error::Error,
@@ -41,8 +41,6 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         let cargo_toml = read_cargo_toml(args.path.clone())?;
         let kata_cfg = read_kata_toml(args.path.clone())?;
 
-        // set status of kata to a very old time, so it will come up as due
-        let kata_name = kata_cfg["name"].as_str().unwrap().to_owned();
 
         let result = sqlx::query(
             r#"
@@ -67,8 +65,6 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         .rows_affected();
         println!("rows added {:?}", result2);
 
-        // set status of kata to a very old time, so it will come up as due
-        db::log_kata(&pool, kata_name, util::Language::Rust).await?;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())
