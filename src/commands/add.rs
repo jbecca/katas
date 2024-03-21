@@ -1,11 +1,8 @@
 use crate::util;
-use sqlx::SqlitePool;
-use std::{
-    error::Error,
-    path::PathBuf,
-};
-use toml::Table;
 use clap::Parser;
+use sqlx::SqlitePool;
+use std::{error::Error, path::PathBuf};
+use toml::Table;
 
 #[derive(Parser, Debug)]
 pub(crate) struct AddArgs {
@@ -40,7 +37,6 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         let rust_main = read_rust_main(args.path.clone())?;
         let cargo_toml = read_cargo_toml(args.path.clone())?;
         let kata_cfg = read_kata_toml(args.path.clone())?;
-
 
         let result = sqlx::query(
             r#"

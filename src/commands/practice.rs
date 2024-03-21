@@ -46,7 +46,7 @@ fn setup_kata(
     kata_name: String,
     main_string: String,
     cargo_string: String,
-    path: PathBuf
+    path: PathBuf,
 ) -> Result<(), Box<dyn Error>> {
     let mut cwd = path.clone();
     cwd.push(kata_name);

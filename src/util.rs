@@ -29,7 +29,7 @@ pub enum Difficulty {
     Easy,
     Medium,
     Hard,
-    VeryHard
+    VeryHard,
 }
 
 impl fmt::Display for Difficulty {
@@ -38,7 +38,7 @@ impl fmt::Display for Difficulty {
             Self::Easy => write!(f, "Easy"),
             Self::Medium => write!(f, "Medium"),
             Self::Hard => write!(f, "Hard"),
-            Self::VeryHard => write!(f, "Very Hard")
+            Self::VeryHard => write!(f, "Very Hard"),
         }
     }
 }

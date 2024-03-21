@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use clap::Parser;
-use lib_katas::util::{parse_config, Language, Difficulty};
+use lib_katas::util::{parse_config, Difficulty, Language};
 use sqlx::sqlite::SqlitePool;
 
 #[derive(Parser, Debug)]
@@ -16,9 +16,8 @@ pub(crate) struct LogArgs {
 
     /// difficulty for practice attempt
     #[arg(short, long, value_enum)]
-    difficulty: Difficulty
+    difficulty: Difficulty,
 }
-
 
 async fn log_kata(
     pool: &SqlitePool,
@@ -30,12 +29,13 @@ async fn log_kata(
         WHERE id = (
             SELECT id from katas
             WHERE name = $1 )
-        AND language = ?2;"#)
-        .bind(kata_name.as_str())
-        .bind(language.to_string())
-        .execute(pool)
-        .await?
-        .rows_affected();
+        AND language = ?2;"#,
+    )
+    .bind(kata_name.as_str())
+    .bind(language.to_string())
+    .execute(pool)
+    .await?
+    .rows_affected();
 
     println!("Rows updated 1: {}", result);
     if result <= 0 {
@@ -48,12 +48,13 @@ async fn log_kata(
                 (SELECT id from katas
                     WHERE name = $1 ),
                 datetime("1970-01-01 00:00:00"),
-                $2);"#)
-                .bind(kata_name.as_str())
-                .bind(language.to_string())
-                .execute(pool)
-                .await?
-                .rows_affected();
+                $2);"#,
+        )
+        .bind(kata_name.as_str())
+        .bind(language.to_string())
+        .execute(pool)
+        .await?
+        .rows_affected();
         println!("Rows updated 2: {}", insert_statement);
     };
 
