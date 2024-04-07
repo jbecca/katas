@@ -23,6 +23,7 @@ pub(crate) async fn run(args: DeleteArgs) -> Result<(), Box<dyn Error>> {
         .await?
         .rows_affected();
         println!("rows deleted (result) {:?}", result);
+        pool.close().await;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())

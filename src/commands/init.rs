@@ -19,12 +19,14 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
                     println!("DB created");
                     let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
                     lib_katas::db::setup_tables(&pool).await?;
+                    pool.close().await;
                 }
                 Err(err) => panic!("error: {}", err),
             }
         } else {
             let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
             lib_katas::db::setup_tables(&pool).await?;
+            pool.close().await;
         }
         Ok(())
     } else {

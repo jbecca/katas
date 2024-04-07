@@ -18,6 +18,7 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
             let temp_path = std::env::current_dir();
             setup_kata(kata_name, main, cg, temp_path?)?;
         }
+        pool.close().await;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())

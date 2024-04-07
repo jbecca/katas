@@ -80,6 +80,7 @@ pub(crate) async fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         log_kata(&pool, options.name, options.language).await?;
+        pool.close().await;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())

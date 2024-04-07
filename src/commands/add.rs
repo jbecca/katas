@@ -61,6 +61,7 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         .rows_affected();
         println!("rows added {:?}", result2);
 
+        pool.close().await;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())
