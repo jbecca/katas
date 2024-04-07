@@ -45,7 +45,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         attempts (
         id INTEGER NOT NULL,
         difficulty TEXT NOT NULL,
-        time TEXT NOT NULL
+        time TEXT NOT NULL,
         FOREIGN KEY (id) REFERENCES katas(id)
         ON DELETE CASCADE ON UPDATE CASCADE);"#,
     )
