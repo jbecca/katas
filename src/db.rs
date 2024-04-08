@@ -69,22 +69,22 @@ pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
 
 pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
     let results =
-        sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#)
+        sqlx::query(r#"SELECT * from katas INNER JOIN attempts on katas.id = attempts.id LIMIT ?1;"#)
             .bind(number.to_string())
             .fetch_all(conn)
             .await?;
 
     println!(
-        "{:>4} {:>24} {:>24} {:>10} ",
-        "id", "name", "time", "language"
+        "{:>5} {:>24} {:>24} {:>15}",
+        "entry", "name", "time", "difficulty"
     );
     for (idx, row) in results.iter().enumerate() {
         println!(
-            "{:>4} {:>24} {:>24} {:>10} ",
+            "{:>5} {:>24} {:>24} {:>15}",
             idx,
             row.get::<String, &str>("name"),
             row.get::<String, &str>("time"),
-            row.get::<String, &str>("language")
+            row.get::<String, &str>("difficulty")
         );
     }
 
