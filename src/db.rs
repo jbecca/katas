@@ -12,7 +12,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     )
     .execute(&mut *conn)
     .await?;
-    println!("Result: {:?}", name_table_result);
+    info!("kata name table creation result: {:?}", name_table_result);
 
     let status_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
@@ -26,7 +26,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     )
     .execute(pool)
     .await?;
-    println!("Result: {:?}", status_table_result);
+    info!("status table creation result: {:?}", status_table_result);
 
     let template_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
@@ -39,7 +39,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     )
     .execute(pool)
     .await?;
-    println!("Result: {:?}", template_table_result);
+    info!("template table creation result: {:?}", template_table_result);
 
     let attempts_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
@@ -53,7 +53,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     .execute(pool)
     .await?;
 
-    println!("Result: {:?}", attempts_table_result);
+    info!("Attempt table creation result: {:?}", attempts_table_result);
 
     Ok(())
 }
