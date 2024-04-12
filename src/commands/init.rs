@@ -8,6 +8,7 @@ use sqlx::{
 use lib_katas::util;
 
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::init::run");
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         if !Sqlite::database_exists(&format!("sqlite://{loc}"))

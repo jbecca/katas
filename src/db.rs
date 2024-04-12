@@ -18,8 +18,9 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         r#"CREATE TABLE IF NOT EXISTS
         status (
         id INTEGER NOT NULL, 
-        time TEXT NOT NULL,
-        language TEXT NOT NULL,
+        due TEXT NOT NULL,
+        n_success INTEGER NOT NULL,
+        last_interval TEXT NOT NULL,
         FOREIGN KEY (id) REFERENCES katas(id)
         ON DELETE CASCADE ON UPDATE CASCADE);"#,
     )

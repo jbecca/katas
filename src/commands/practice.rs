@@ -9,6 +9,7 @@ use lib_katas::util::Difficulty;
 
 /// Get the most_recent kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::practice::run");
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
@@ -27,10 +28,12 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
 }
 
 async fn find_most_recent_kata(conn: &SqlitePool) -> Result<(String, String, String), Box<dyn Error>> {
+    trace!("Starting commands::practice::find_most_recent_kata");
     let result = sqlx::query(
         r#"SELECT * from katas
         INNER JOIN attempts
         ON katas.id = attempts.id
+        ORDER BY time
         ASC LIMIT 1;"#,
     )
     .fetch_one(conn)
@@ -42,6 +45,7 @@ async fn find_most_recent_kata(conn: &SqlitePool) -> Result<(String, String, Str
 }
 
 fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty {
+    trace!("Starting commands::practice::new_bucket");
     match (difficulty, current_bucket) {
         (Difficulty::Easy, Difficulty::VeryHard) => Difficulty::Medium,
         (Difficulty::Easy, _) => Difficulty::Easy,
@@ -55,12 +59,14 @@ fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty 
     }
 }
 
+
 fn setup_kata(
     kata_name: String,
     main_string: String,
     cargo_string: String,
     path: PathBuf,
 ) -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::practice::setup_kata");
     let mut cwd = path.clone();
     cwd.push(kata_name);
     cwd.push("src");

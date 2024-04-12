@@ -25,6 +25,7 @@ async fn log_kata(
     kata_name: String,
     difficulty: Difficulty,
 ) -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::log::log_kata");
     println!("trying to insert into status");
     dbg!(kata_name.as_str());
     println!("{:?}", "test_kata_1");
@@ -47,6 +48,7 @@ async fn log_kata(
 }
 
 pub(crate) async fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::log::run");
     let user_cfg = parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;

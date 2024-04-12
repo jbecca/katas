@@ -1,3 +1,6 @@
+extern crate pretty_env_logger;
+#[macro_use] extern crate log;
+
 use clap::{Parser, Subcommand};
 use std::error::Error;
 
@@ -30,8 +33,12 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + 'static>> {
+    pretty_env_logger::init();
+    trace!("Entering main");
+    trace!("parsing args");
     let args = Args::parse();
 
+    trace!("Matching command");
     match args.command {
         SubCommands::List(options) => commands::list::run(options).await?,
         SubCommands::Log(options) => commands::log::run(options).await?,

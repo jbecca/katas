@@ -11,18 +11,21 @@ pub(crate) struct AddArgs {
 }
 
 fn read_rust_main(path: PathBuf) -> Result<String, Box<dyn Error>> {
+    trace!("Starting commands::add::read_rust_main");
     let main_path = path.join("src/main.rs");
     let main_str = std::fs::read_to_string(main_path.as_path())?;
     Ok(main_str)
 }
 
 fn read_cargo_toml(path: PathBuf) -> Result<String, Box<dyn Error>> {
+    trace!("Starting commands::add::read_cargo_toml");
     let toml_path = path.join("Cargo.toml");
     let toml_str = std::fs::read_to_string(toml_path.as_path())?;
     Ok(toml_str)
 }
 
 fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
+    trace!("Starting commands::add::read_kata_toml");
     let file_path = path.join("config.toml");
     let kata_config = std::fs::read_to_string(file_path)?
         .parse::<Table>()
@@ -31,6 +34,7 @@ fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
 }
 
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
+    trace!("Starting commands::add::run");
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
