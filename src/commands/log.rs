@@ -19,19 +19,6 @@ pub(crate) struct LogArgs {
     difficulty: Difficulty,
 }
 
-fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty {
-    match (difficulty, current_bucket) {
-        (Difficulty::Easy, Difficulty::VeryHard) => Difficulty::Medium,
-        (Difficulty::Easy, _) => Difficulty::Easy,
-        (Difficulty::Medium, Difficulty::VeryHard) => Difficulty::Hard,
-        (Difficulty::Medium, _) => Difficulty::Medium,
-        (Difficulty::Hard, Difficulty::Easy) => Difficulty::Medium,
-        (Difficulty::Hard, Difficulty::Medium) => Difficulty::Hard,
-        (Difficulty::Hard, _) => Difficulty::VeryHard,
-        (Difficulty::VeryHard, Difficulty::Easy) => Difficulty::Hard,
-        (Difficulty::VeryHard, _) => Difficulty::VeryHard,
-    }
-}
 
 async fn log_kata(
     pool: &SqlitePool,

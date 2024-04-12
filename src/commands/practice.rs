@@ -5,13 +5,14 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use lib_katas::util::Difficulty;
 
-/// Get the oldest kata in database by last completed time
+/// Get the most_recent kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
-        let (kata_name, cg, main) = find_oldest_kata(&pool).await?;
+        let (kata_name, cg, main) = find_most_recent_kata(&pool).await?;
         if let Some(practice_path) = user_cfg["practice_location"].as_str() {
             setup_kata(kata_name, main, cg, practice_path.into())?
         } else {
@@ -25,14 +26,11 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     }
 }
 
-async fn find_oldest_kata(conn: &SqlitePool) -> Result<(String, String, String), Box<dyn Error>> {
+async fn find_most_recent_kata(conn: &SqlitePool) -> Result<(String, String, String), Box<dyn Error>> {
     let result = sqlx::query(
         r#"SELECT * from katas
-        INNER JOIN status
-        ON katas.id = status.id
-        LEFT JOIN rust
-        ON katas.id = rust.id
-        ORDER BY time
+        INNER JOIN attempts
+        ON katas.id = attempts.id
         ASC LIMIT 1;"#,
     )
     .fetch_one(conn)
@@ -41,6 +39,20 @@ async fn find_oldest_kata(conn: &SqlitePool) -> Result<(String, String, String),
     let cargo = result.get::<String, &str>("cargo");
     let main = result.get::<String, &str>("main");
     Ok((kata_name, cargo, main))
+}
+
+fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty {
+    match (difficulty, current_bucket) {
+        (Difficulty::Easy, Difficulty::VeryHard) => Difficulty::Medium,
+        (Difficulty::Easy, _) => Difficulty::Easy,
+        (Difficulty::Medium, Difficulty::VeryHard) => Difficulty::Hard,
+        (Difficulty::Medium, _) => Difficulty::Medium,
+        (Difficulty::Hard, Difficulty::Easy) => Difficulty::Medium,
+        (Difficulty::Hard, Difficulty::Medium) => Difficulty::Hard,
+        (Difficulty::Hard, _) => Difficulty::VeryHard,
+        (Difficulty::VeryHard, Difficulty::Easy) => Difficulty::Hard,
+        (Difficulty::VeryHard, _) => Difficulty::VeryHard,
+    }
 }
 
 fn setup_kata(
