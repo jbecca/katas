@@ -1,11 +1,11 @@
 use lib_katas::util;
+use lib_katas::util::Difficulty;
 use sqlx::sqlite::SqlitePool;
 use sqlx::Row;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use lib_katas::util::Difficulty;
 
 /// Get the most_recent kata in database by last completed time
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
@@ -27,7 +27,9 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     }
 }
 
-async fn find_most_recent_kata(conn: &SqlitePool) -> Result<(String, String, String), Box<dyn Error>> {
+async fn find_most_recent_kata(
+    conn: &SqlitePool,
+) -> Result<(String, String, String), Box<dyn Error>> {
     trace!("Starting commands::practice::find_most_recent_kata");
     let result = sqlx::query(
         r#"SELECT * from katas
@@ -58,7 +60,6 @@ fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty 
         (Difficulty::VeryHard, _) => Difficulty::VeryHard,
     }
 }
-
 
 fn setup_kata(
     kata_name: String,

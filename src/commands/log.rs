@@ -19,7 +19,6 @@ pub(crate) struct LogArgs {
     difficulty: Difficulty,
 }
 
-
 async fn log_kata(
     pool: &SqlitePool,
     kata_name: String,

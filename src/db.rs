@@ -39,7 +39,10 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     )
     .execute(pool)
     .await?;
-    info!("template table creation result: {:?}", template_table_result);
+    info!(
+        "template table creation result: {:?}",
+        template_table_result
+    );
 
     let attempts_table_result = sqlx::query(
         r#"CREATE TABLE IF NOT EXISTS
@@ -69,11 +72,12 @@ pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
 }
 
 pub async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
-    let results =
-        sqlx::query(r#"SELECT * from katas INNER JOIN attempts on katas.id = attempts.id LIMIT ?1;"#)
-            .bind(number.to_string())
-            .fetch_all(conn)
-            .await?;
+    let results = sqlx::query(
+        r#"SELECT * from katas INNER JOIN attempts on katas.id = attempts.id LIMIT ?1;"#,
+    )
+    .bind(number.to_string())
+    .fetch_all(conn)
+    .await?;
 
     println!(
         "{:>5} {:>24} {:>24} {:>15}",
