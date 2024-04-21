@@ -65,6 +65,22 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         .rows_affected();
         println!("rows added {:?}", result2);
 
+        let result3 = sqlx::query(
+            r#"
+            INSERT into status (id, due, n_success, last_interval, easiness_factor )
+            VALUES ((SELECT id from katas WHERE name = $1), datetime(), ?2, ?3, ?4);
+            "#
+        )
+        .bind(kata_name.as_str())
+        .bind(0)
+        .bind(0)
+        .bind(2.5)
+        .execute(&pool)
+        .await?
+        .rows_affected();
+        trace!("Rows added to status table {:?}", result3);
+
+
         pool.close().await;
         Ok(())
     } else {
