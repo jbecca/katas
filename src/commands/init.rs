@@ -53,6 +53,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         due TEXT NOT NULL,
         n_success INTEGER NOT NULL,
         last_interval TEXT NOT NULL,
+        easiness_factor FLOAT NOT NULL,
         FOREIGN KEY (id) REFERENCES katas(id)
         ON DELETE CASCADE ON UPDATE CASCADE);"#,
     )
@@ -88,6 +89,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     .execute(pool)
     .await?;
 
+    pool.close().await;
     info!("Attempt table creation result: {:?}", attempts_table_result);
 
     Ok(())

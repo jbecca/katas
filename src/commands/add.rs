@@ -24,13 +24,13 @@ fn read_cargo_toml(path: PathBuf) -> Result<String, Box<dyn Error>> {
     Ok(toml_str)
 }
 
-fn read_kata_toml(path: PathBuf) -> Result<toml::Table, Box<dyn Error>> {
-    trace!("Starting commands::add::read_kata_toml");
-    let file_path = path.join("config.toml");
-    let kata_config = std::fs::read_to_string(file_path)?
+fn get_kata_name(path: PathBuf) -> Result<String, Box<dyn Error>> {
+    trace!("Starting commands::add::get_kata_name");
+    let file_path = path.join("Cargo.toml");
+    let cargo_toml = std::fs::read_to_string(file_path)?
         .parse::<Table>()
         .expect("file was not TOML parsible");
-    Ok(kata_config)
+    Ok(cargo_toml["package"]["name"].as_str().expect("could not get string from Cargo toml").to_owned())
 }
 
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
@@ -40,13 +40,13 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
         let rust_main = read_rust_main(args.path.clone())?;
         let cargo_toml = read_cargo_toml(args.path.clone())?;
-        let kata_cfg = read_kata_toml(args.path.clone())?;
+        let kata_name = get_kata_name(args.path.clone())?;
 
         let result = sqlx::query(
             r#"
            INSERT into katas (name) VALUES ( ?1 );"#,
         )
-        .bind(kata_cfg["name"].as_str().unwrap())
+        .bind(kata_name.clone())
         .execute(&pool)
         .await?
         .rows_affected();
@@ -57,7 +57,7 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
             INSERT into rust (id, main, cargo)
             VALUES ((SELECT id from katas WHERE name = $1), ?2, ?3);"#,
         )
-        .bind(kata_cfg["name"].as_str())
+        .bind(kata_name.as_str())
         .bind(rust_main)
         .bind(cargo_toml)
         .execute(&pool)
@@ -88,13 +88,13 @@ mod tests {
     #[test]
     fn test_cargo_toml() {
         let p = PathBuf::from("/Users/jeffreybecca/projects/katas/testdir");
-        assert_eq!(read_cargo_toml(p).unwrap(), String::from("[package]\nname = \"testdir\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html\n\n[dependencies]\n"));
+        assert_eq!(read_cargo_toml(p).unwrap(), String::from("[package]\nname = \"test_kata_1\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html\n\n[dependencies]\n"));
     }
 
     #[test]
     fn test_kata_cfg() {
         let p = PathBuf::from("/Users/jeffreybecca/projects/katas/testdir");
-        let cfg = read_kata_toml(p).unwrap();
-        assert_eq!(cfg["name"].as_str(), Some("test_kata_1"));
+        let kata_name = get_kata_name(p).unwrap();
+        assert_eq!(kata_name.as_str(), "test_kata_1");
     }
 }
