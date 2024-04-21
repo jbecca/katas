@@ -46,21 +46,6 @@ async fn find_most_recent_kata(
     Ok((kata_name, cargo, main))
 }
 
-fn new_bucket(difficulty: Difficulty, current_bucket: Difficulty) -> Difficulty {
-    trace!("Starting commands::practice::new_bucket");
-    match (difficulty, current_bucket) {
-        (Difficulty::Easy, Difficulty::VeryHard) => Difficulty::Medium,
-        (Difficulty::Easy, _) => Difficulty::Easy,
-        (Difficulty::Medium, Difficulty::VeryHard) => Difficulty::Hard,
-        (Difficulty::Medium, _) => Difficulty::Medium,
-        (Difficulty::Hard, Difficulty::Easy) => Difficulty::Medium,
-        (Difficulty::Hard, Difficulty::Medium) => Difficulty::Hard,
-        (Difficulty::Hard, _) => Difficulty::VeryHard,
-        (Difficulty::VeryHard, Difficulty::Easy) => Difficulty::Hard,
-        (Difficulty::VeryHard, _) => Difficulty::VeryHard,
-    }
-}
-
 fn setup_kata(
     kata_name: String,
     main_string: String,
