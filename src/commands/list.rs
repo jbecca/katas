@@ -25,23 +25,23 @@ pub(crate) async fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
 
 async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
     let results = sqlx::query(
-        r#"SELECT * from katas INNER JOIN attempts on katas.id = attempts.id LIMIT ?1;"#,
+        r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#,
     )
     .bind(number.to_string())
     .fetch_all(conn)
     .await?;
 
     println!(
-        "{:>5} {:>24} {:>24} {:>15}",
-        "entry", "name", "time", "difficulty"
+        "{:>5} {:>24} {:>24} {:>22}",
+        "entry", "name", "due", "successful completions"
     );
     for (idx, row) in results.iter().enumerate() {
         println!(
-            "{:>5} {:>24} {:>24} {:>15}",
+            "{:>5} {:>24} {:>24} {:>22}",
             idx,
             row.get::<String, &str>("name"),
-            row.get::<String, &str>("time"),
-            row.get::<String, &str>("difficulty")
+            row.get::<String, &str>("due"),
+            row.get::<i32, &str>("n_success")
         );
     }
 
