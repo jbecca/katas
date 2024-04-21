@@ -1,5 +1,5 @@
 use lib_katas::util;
-use lib_katas::util::Difficulty;
+
 use sqlx::sqlite::SqlitePool;
 use sqlx::Row;
 use std::error::Error;
