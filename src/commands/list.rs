@@ -1,7 +1,7 @@
 use clap::Parser;
-use lib_katas::db;
 use lib_katas::util;
 use sqlx::sqlite::SqlitePool;
+use sqlx::Row;
 use std::error::Error;
 
 #[derive(Parser, Debug)]
@@ -15,10 +15,35 @@ pub(crate) async fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = util::parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
-        db::list_n_katas(&pool, &options.number).await?;
+        list_n_katas(&pool, &options.number).await?;
         pool.close().await;
         Ok(())
     } else {
         Err("key db_location not found in TOML file".into())
     }
+}
+
+async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
+    let results = sqlx::query(
+        r#"SELECT * from katas INNER JOIN attempts on katas.id = attempts.id LIMIT ?1;"#,
+    )
+    .bind(number.to_string())
+    .fetch_all(conn)
+    .await?;
+
+    println!(
+        "{:>5} {:>24} {:>24} {:>15}",
+        "entry", "name", "time", "difficulty"
+    );
+    for (idx, row) in results.iter().enumerate() {
+        println!(
+            "{:>5} {:>24} {:>24} {:>15}",
+            idx,
+            row.get::<String, &str>("name"),
+            row.get::<String, &str>("time"),
+            row.get::<String, &str>("difficulty")
+        );
+    }
+
+    Ok(())
 }
