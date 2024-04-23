@@ -52,7 +52,7 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
         id INTEGER NOT NULL, 
         due TEXT NOT NULL,
         n_success INTEGER NOT NULL,
-        last_interval TEXT NOT NULL,
+        last_interval INTEGER NOT NULL,
         easiness_factor FLOAT NOT NULL,
         FOREIGN KEY (id) REFERENCES katas(id)
         ON DELETE CASCADE ON UPDATE CASCADE);"#,
