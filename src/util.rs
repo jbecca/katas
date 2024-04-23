@@ -79,7 +79,7 @@ pub fn sm2_algo(
     easiness_factor: f32,
     interval: i32,
 ) -> (i32, f32, i32) {
-    let mut new_rep_num = 0;
+    let mut new_rep_num = repetition_number;
     let new_interval: i32;
 
     match user_grade {

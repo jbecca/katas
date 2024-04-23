@@ -53,13 +53,17 @@ async fn log_kata(
     Ok(())
 }
 
+/// This function handles querying and updating the database using the
+/// SM2 algorithm.
 async fn update_status(pool: &SqlitePool, kata_name: String, difficulty: Difficulty) -> Result<(), Box<dyn Error>> {
     trace!("Getting entry in status table for current values");
     let query = sqlx::query(
         r#"SELECT * from status
         INNER JOIN katas on katas.id = status.id
         WHERE name = $1
-        AND due < datetime()"#
+        ORDER BY due
+        ASC LIMIT 1"#
+        //AND due < datetime()
     ).bind(kata_name.as_str())
     .fetch_one(pool)
     .await?;
