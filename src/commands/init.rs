@@ -94,14 +94,3 @@ pub async fn setup_tables(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
-pub async fn insert_kata_name(conn: &SqlitePool, kata_name: String) {
-    let result = sqlx::query(r#"INSERT into katas (name) VALUES ( ?1 );"#)
-        .bind(kata_name.as_str())
-        .execute(conn)
-        .await
-        .unwrap();
-
-    println!("Result: {:?}", result);
-}
-
