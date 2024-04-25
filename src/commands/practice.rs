@@ -49,24 +49,6 @@ async fn find_kata_for_review(conn: &SqlitePool) -> Result<(String, String, Stri
 
 }
 
-async fn find_most_recent_kata(
-    conn: &SqlitePool,
-) -> Result<(String, String, String), Box<dyn Error>> {
-    trace!("Starting commands::practice::find_most_recent_kata");
-    let result = sqlx::query(
-        r#"SELECT * from katas
-        INNER JOIN attempts
-        ON katas.id = attempts.id
-        ORDER BY time
-        ASC LIMIT 1;"#,
-    )
-    .fetch_one(conn)
-    .await?;
-    let kata_name = result.get::<String, &str>("name");
-    let cargo = result.get::<String, &str>("cargo");
-    let main = result.get::<String, &str>("main");
-    Ok((kata_name, cargo, main))
-}
 
 fn setup_kata(
     kata_name: String,
@@ -76,6 +58,7 @@ fn setup_kata(
 ) -> Result<(), Box<dyn Error>> {
     trace!("Starting commands::practice::setup_kata");
     let mut cwd = path.clone();
+    info!("Setting up {:?} in {:?}", &kata_name, &cwd);
     cwd.push(kata_name);
     cwd.push("src");
     std::fs::create_dir_all(cwd.as_path())?;
