@@ -1,10 +1,9 @@
-use std::error::Error;
 use lib_katas::util;
 use sqlx::{
     migrate::MigrateDatabase,
     sqlite::{Sqlite, SqlitePool},
 };
-
+use std::error::Error;
 
 pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     trace!("Starting commands::init::run");

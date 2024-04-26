@@ -24,12 +24,11 @@ pub(crate) async fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
 }
 
 async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
-    let results = sqlx::query(
-        r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#,
-    )
-    .bind(number.to_string())
-    .fetch_all(conn)
-    .await?;
+    let results =
+        sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#)
+            .bind(number.to_string())
+            .fetch_all(conn)
+            .await?;
 
     println!(
         "{:>5} {:>24} {:>24} {:>22}",

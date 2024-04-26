@@ -27,7 +27,9 @@ pub(crate) async fn run() -> Result<(), Box<dyn Error>> {
     }
 }
 
-async fn find_kata_for_review(conn: &SqlitePool) -> Result<(String, String, String), Box<dyn Error>> {
+async fn find_kata_for_review(
+    conn: &SqlitePool,
+) -> Result<(String, String, String), Box<dyn Error>> {
     trace!("Looking for kata for review");
     let kata = sqlx::query(
         r#"SELECT * from katas
@@ -36,9 +38,10 @@ async fn find_kata_for_review(conn: &SqlitePool) -> Result<(String, String, Stri
         INNER JOIN rust
         ON katas.id = rust.id
         ORDER BY due
-        ASC LIMIT 1;"#
-    ).fetch_one(conn)
-        .await?;
+        ASC LIMIT 1;"#,
+    )
+    .fetch_one(conn)
+    .await?;
 
     trace!("Query ran");
     let kata_name = kata.get::<String, &str>("name");
@@ -46,9 +49,7 @@ async fn find_kata_for_review(conn: &SqlitePool) -> Result<(String, String, Stri
     let cargo = kata.get::<String, &str>("cargo");
     let main = kata.get::<String, &str>("main");
     Ok((kata_name, cargo, main))
-
 }
-
 
 fn setup_kata(
     kata_name: String,

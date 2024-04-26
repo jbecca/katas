@@ -30,7 +30,10 @@ fn get_kata_name(path: PathBuf) -> Result<String, Box<dyn Error>> {
     let cargo_toml = std::fs::read_to_string(file_path)?
         .parse::<Table>()
         .expect("file was not TOML parsible");
-    Ok(cargo_toml["package"]["name"].as_str().expect("could not get string from Cargo toml").to_owned())
+    Ok(cargo_toml["package"]["name"]
+        .as_str()
+        .expect("could not get string from Cargo toml")
+        .to_owned())
 }
 
 pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
@@ -69,7 +72,7 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
             r#"
             INSERT into status (id, due, n_success, last_interval, easiness_factor )
             VALUES ((SELECT id from katas WHERE name = $1), datetime(), ?2, ?3, ?4);
-            "#
+            "#,
         )
         .bind(kata_name.as_str())
         .bind(0)
@@ -79,7 +82,6 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         .await?
         .rows_affected();
         trace!("Rows added to status table {:?}", result3);
-
 
         pool.close().await;
         Ok(())

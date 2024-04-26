@@ -1,10 +1,10 @@
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::ValueEnum;
+use log::trace;
 use std::error::Error;
 use std::{env, fmt};
 use toml::Table;
-use log::{trace};
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
 pub enum Language {

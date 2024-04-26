@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use clap::Parser;
-use lib_katas::util::{parse_config, Difficulty, Language, self};
+use lib_katas::util::{self, parse_config, Difficulty, Language};
 use sqlx::sqlite::SqlitePool;
 use sqlx::Row;
 
@@ -20,7 +20,7 @@ pub(crate) struct LogArgs {
     difficulty: Difficulty,
 }
 
-/// This function and SQLite table are separate from the 
+/// This function and SQLite table are separate from the
 /// spaced repetition algorithm logic. This also needs to be
 /// done in each kata attempt. The purpose of this table
 /// and function is to have a record of every attempt and when.
@@ -55,16 +55,20 @@ async fn log_kata(
 
 /// This function handles querying and updating the database using the
 /// SM2 algorithm.
-async fn update_status(pool: &SqlitePool, kata_name: String, difficulty: Difficulty) -> Result<(), Box<dyn Error>> {
+async fn update_status(
+    pool: &SqlitePool,
+    kata_name: String,
+    difficulty: Difficulty,
+) -> Result<(), Box<dyn Error>> {
     trace!("Getting entry in status table for current values");
     let query = sqlx::query(
         r#"SELECT * from status
         INNER JOIN katas on katas.id = status.id
         WHERE name = $1
         ORDER BY due
-        ASC LIMIT 1"#
-        //AND due < datetime()
-    ).bind(kata_name.as_str())
+        ASC LIMIT 1"#, //AND due < datetime()
+    )
+    .bind(kata_name.as_str())
     .fetch_one(pool)
     .await?;
 
@@ -76,7 +80,8 @@ async fn update_status(pool: &SqlitePool, kata_name: String, difficulty: Difficu
     let last_interval = query.get::<i32, &str>("last_interval");
     trace!("Original interval {:?}", &last_interval);
 
-    let (new_rep_num, new_ef, new_interval) = util::sm2_algo(difficulty, rep_num, ef, last_interval);
+    let (new_rep_num, new_ef, new_interval) =
+        util::sm2_algo(difficulty, rep_num, ef, last_interval);
     trace!("New rep num {:?}", &new_rep_num);
     trace!("New EF {:?}", &new_ef);
     trace!("New interval {:?}", &new_interval);
@@ -86,15 +91,15 @@ async fn update_status(pool: &SqlitePool, kata_name: String, difficulty: Difficu
         SET n_success = ?1,
             easiness_factor = ?2,
             last_interval = ?3,
-            due = datetime('now', concat('+', $4, ' day'))"#
-    ).bind(new_rep_num)
+            due = datetime('now', concat('+', $4, ' day'))"#,
+    )
+    .bind(new_rep_num)
     .bind(new_ef)
     .bind(new_interval.clone())
     .bind(new_interval)
     .execute(pool)
     .await?;
     debug!("update query: {:?}", new_query);
-
 
     Ok(())
 }
