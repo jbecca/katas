@@ -79,6 +79,8 @@ async fn update_status(
     trace!("Original EF {:?}", &ef);
     let last_interval = query.get::<i32, &str>("last_interval");
     trace!("Original interval {:?}", &last_interval);
+    let id = query.get::<i32, &str>("id");
+    trace!("ID {:?}", &id);
 
     let (new_rep_num, new_ef, new_interval) =
         util::sm2_algo(difficulty, rep_num, ef, last_interval);
@@ -91,12 +93,15 @@ async fn update_status(
         SET n_success = ?1,
             easiness_factor = ?2,
             last_interval = ?3,
-            due = datetime('now', concat('+', $4, ' day'))"#,
+            due = datetime('now', concat('+', $4, ' day'))
+        WHERE status.id = $5"#,
+
     )
     .bind(new_rep_num)
     .bind(new_ef)
-    .bind(new_interval.clone())
     .bind(new_interval)
+    .bind(new_interval)
+    .bind(id)
     .execute(pool)
     .await?;
     debug!("update query: {:?}", new_query);
@@ -109,7 +114,7 @@ pub(crate) async fn run(options: LogArgs) -> Result<(), Box<dyn Error>> {
     let user_cfg = parse_config()?;
     if let Some(loc) = user_cfg["db_location"].as_str() {
         let pool = SqlitePool::connect(&format!("sqlite://{loc}")).await?;
-        log_kata(&pool, options.name.clone(), options.difficulty.clone()).await?;
+        log_kata(&pool, options.name.clone(), options.difficulty).await?;
         update_status(&pool, options.name, options.difficulty).await?;
         pool.close().await;
         Ok(())
