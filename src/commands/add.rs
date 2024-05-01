@@ -71,7 +71,7 @@ pub(crate) async fn run(args: AddArgs) -> Result<(), Box<dyn Error>> {
         let result3 = sqlx::query(
             r#"
             INSERT into status (id, due, n_success, last_interval, easiness_factor )
-            VALUES ((SELECT id from katas WHERE name = $1), datetime(), ?2, ?3, ?4);
+            VALUES ((SELECT id from katas WHERE name = $1), datetime('now','localtime'), ?2, ?3, ?4);
             "#,
         )
         .bind(kata_name.as_str())

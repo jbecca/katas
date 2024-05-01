@@ -41,7 +41,7 @@ async fn log_kata(
             (SELECT id from katas
                 WHERE name = $1 ),
             $2,
-            datetime());"#,
+            datetime('now','localtime'));"#,
     )
     .bind(kata_name.as_str())
     .bind(difficulty.to_string())
@@ -93,7 +93,7 @@ async fn update_status(
         SET n_success = ?1,
             easiness_factor = ?2,
             last_interval = ?3,
-            due = datetime('now', concat('+', $4, ' day'))
+            due = datetime('now', 'localtime', concat('+', $4, ' day'))
         WHERE status.id = $5"#,
 
     )
