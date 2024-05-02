@@ -25,7 +25,7 @@ pub(crate) async fn run(options: ListArgs) -> Result<(), Box<dyn Error>> {
 
 async fn list_n_katas(conn: &SqlitePool, number: &u32) -> Result<(), Box<dyn Error>> {
     let results =
-        sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id LIMIT ?1;"#)
+        sqlx::query(r#"SELECT * from katas INNER JOIN status on katas.id = status.id ORDER BY due ASC LIMIT ?1;"#)
             .bind(number.to_string())
             .fetch_all(conn)
             .await?;
